@@ -36,7 +36,7 @@ def turn(board)
     move(board, input, current_player(board))
   else
     turn(board)
-  end 
+  end
   display_board(board)
 end
 
@@ -75,7 +75,7 @@ def won?(board)
   end
 end
 
-def full?(board) 
+def full?(board)
   if board.detect {|i| i == " " || i == nil}
     return false
   else
