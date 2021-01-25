@@ -54,7 +54,6 @@ def turn(board)
     move(board, index, player_token)
     display_board(board)
   else
-    puts ""
     turn(board)
   end
 end
