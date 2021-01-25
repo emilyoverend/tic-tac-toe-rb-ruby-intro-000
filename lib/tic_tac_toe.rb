@@ -17,70 +17,78 @@ def display_board(board)
   puts " #{board[6]} | #{board[7]} | #{board[8]} "
 end
 
-def move(board, location, current_player = "X")
-  board[location.to_i-1] = current_player
+def input_to_index(user_input)
+  new_user_input = user_input.to_i
+  new_user_input -= 1
+  return new_user_input
 end
 
-def position_taken?(board, location)
-  board[location] != " " && board[location] != ""
+def move(array, index, value = "X")
+  array[index] = value
+  return array
 end
 
-def valid_move?(board, position)
-  position.to_i.between?(1,9) && !position_taken?(board, position.to_i-1)
+def position_taken?(board, index)
+  if board[index] == "" || board[index] == " " || board[index] == nil
+    return false
+  elsif board[index] == "X" || board[index] == "O"
+    return true
+  else
+    return false
+  end
+end
+
+def valid_move?(board, index)
+  if !position_taken?(board, index) && (index).between?(0,8)
+    return true
+  else
+    return false
+  end
 end
 
 def turn(board)
   puts "Please enter 1-9:"
-  input = gets.strip
-  if valid_move?(board, input)
-    move(board, input, current_player(board))
+  num = gets.chomp
+  index = input_to_index(num)
+  if valid_move?(board, input) == true
+    move(board, index)
+    display_board(board)
   else
     turn(board)
   end
-  display_board(board)
 end
 
 def turn_count(board)
-  counter = 0
-  board.each do |i|
-    if i == "X" || i == "O"
-      counter += 1
+  turns = 0
+  board.each do |space|
+    if space == "X" || space == "O"
+      turns += 1
     end
   end
-  return counter
-end
-
-def current_player(board)
-  turn_count(board) % 2 == 0 ? "X" : "O"
+  return turns
 end
 
 def won?(board)
+  WIN_COMBINATIONS.each {|win_combo|
+    index_0 = win_combo[0]
+    index_1 = win_combo[1]
+    index_2 = win_combo[2]
 
-  WIN_COMBINATIONS.detect do |win_combination|
-    win_index_1 = win_combination[0]
-    win_index_2 = win_combination[1]
-    win_index_3 = win_combination[2]
-
-    position_1 = board[win_index_1]
-    position_2 = board[win_index_2]
-    position_3 = board[win_index_3]
+    position_1 = board[index_0]
+    position_2 = board[index_1]
+    position_3 = board[index_2]
 
     if position_1 == "X" && position_2 == "X" && position_3 == "X"
-      return win_combination
-    elsif position_1 == "O" && position_2 == "O" && position_3n == "O"
-      return win_combination
-    else
-      false
+      return win_combo
+    elsif position_1 == "O" && position_2 == "O" && position_3 == "O"
+      return win_combo
     end
-  end
+  }
+  return false
 end
 
 def full?(board)
-  if board.detect {|i| i == " " || i == nil}
-    return false
-  else
-    return true
-  end
+  board.all? {|index| index == "X" || index == "O"}
 end
 
 def draw?(board)
@@ -92,7 +100,7 @@ def draw?(board)
 end
 
 def over?(board)
-  if draw?(board) || won?(board)
+  if won?(board) || full?(board) || draw?(board)
     return true
   else
     return false
@@ -100,8 +108,16 @@ def over?(board)
 end
 
 def winner(board)
-  if win_combination = won?(board)
-    board[win_combination.first]
+  index = []
+  index = won?(board)
+  if index == false
+    return nil
+  else
+    if board[index[0]] == "X"
+      return "X"
+    else 
+      return "O"
+    end
   end
 end
 
